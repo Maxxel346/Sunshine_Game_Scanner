@@ -13,11 +13,15 @@ Your game directory should look like this:
 Games/
 
 ├─ Wafer Renyah/
+
 │ └─ Renyah.exe
+
 ├─ Doom Eternal/
+
 │ └─ Game.exe
+
 └─ Hollow Knight/
-└─ Game.exe
+  └─ Game.exe
 
 Each subfolder = one game.  
 The script will map:
