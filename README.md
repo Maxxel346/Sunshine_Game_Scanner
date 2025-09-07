@@ -49,3 +49,27 @@ Install dependencies:
 ```bash
 pip install watchdog
 ```
+
+## 📝 Configuration
+By default, the script:
+- Watches the Games/ folder.
+- Writes apps.json to:
+```shell
+%LOCALAPPDATA%\GameWatcher\games.json
+```
+  (You can copy this into your Sunshine config folder or symlink it.)
+- You can edit the script to change:
+  GAMES_DIR → where your games are stored.
+  OUTPUT_FILE → where the generated JSON should be saved.
+
+## 🔄 Autostart on Windows
+- Create a shortcut to sunshine_gamesync.py.
+- Place it in: 
+  ```shell
+  shell:startup
+  ```
+  (Run via Win+R).
+- Sunshine will always have the latest apps list at boot.
+
+
+
