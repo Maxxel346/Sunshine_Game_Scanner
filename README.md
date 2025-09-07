@@ -9,7 +9,7 @@ This is useful if you have multiple games organized into folders (each with a `G
 ## 📂 Folder Structure Example
 
 Your game directory should look like this:
-
+---
 Games/
 ├─ Wafer Renyah/
 │ └─ Renyah.exe
