@@ -11,6 +11,7 @@ This is useful if you have multiple games organized into folders (each with a `G
 Your game directory should look like this:
 ---
 Games/
+
 ├─ Wafer Renyah/
 │ └─ Renyah.exe
 ├─ Doom Eternal/
