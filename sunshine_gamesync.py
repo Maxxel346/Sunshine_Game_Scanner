@@ -137,7 +137,8 @@ if __name__ == "__main__":
 
     try:
         while True:
-            pass
+            # pass
+            observer.join(1)
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
