@@ -9,16 +9,25 @@ EXE_NAME = None
 
 OUTPUT_FILE = "H:\\games.json"  # final JSON file (path+)
 
+IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".webp")
+
+def find_icon(folder_path):
+    """Look for an icon/cover image file inside folder"""
+    for f in os.listdir(folder_path):
+        if f.lower().startswith(("icon", "cover")) and f.lower().endswith(IMAGE_EXTS):
+            return os.path.join(folder_path, f)
+    return ""
 
 def make_entry(name, exe_path, working_dir):
     """Builds one game entry"""
+    icon_path = find_icon(working_dir)
     return {
         "auto-detach": True,
         "cmd": f"\"{exe_path}\"",
         "elevated": False,
         "exclude-global-prep-cmd": False,
         "exit-timeout": 5,
-        "image-path": "",
+        "image-path": icon_path,
         "name": name,
         "output": "",
         "wait-all": True,
@@ -26,13 +35,22 @@ def make_entry(name, exe_path, working_dir):
     }
 
 
+
+# Load existing JSON if exists (to keep parameters)
 games = {}  # {folder_name: dict entry}
+if os.path.exists(OUTPUT_FILE):
+    try:
+        with open(OUTPUT_FILE, "r", encoding="utf-8") as f:
+            old_data = json.load(f)
+            for entry in old_data.get("apps", []):
+                games[entry["name"]] = entry
+    except Exception as e:
+        print(f"[WARNING] Could not load old JSON: {e}")
 
 
 def scan_all():
     """Initial scan of games folder"""
     global games
-    games.clear()
     if not os.path.exists(GAMES_DIR):
         print(f"[ERROR] {GAMES_DIR} not found!")
         return
@@ -52,7 +70,15 @@ def scan_all():
                         break
 
             if exe_path:
-                games[folder] = make_entry(folder, exe_path, folder_path)
+                if folder not in games:
+                    games[folder] = make_entry(folder, exe_path, folder_path)
+                else:
+                    # Update exe path if missing, but keep other settings
+                    if not games[folder].get("cmd"):
+                        games[folder]["cmd"] = f"\"{exe_path}\""
+                    # Fill icon only if empty
+                    if not games[folder].get("image-path"):
+                        games[folder]["image-path"] = find_icon(folder_path)
 
     print("\n[INITIAL SCAN]")
     for g, entry in games.items():
@@ -110,7 +136,11 @@ class GameHandler(FileSystemEventHandler):
             if folder not in games:
                 games[folder] = make_entry(folder, file_path, os.path.dirname(file_path))
                 print(f"[EXE ADDED] {folder} -> {file_path}")
-
+        elif file_path.lower().endswith(IMAGE_EXTS):
+            folder = os.path.basename(os.path.dirname(file_path))
+            if folder in games and not games[folder].get("image-path"):
+                games[folder]["image-path"] = file_path
+                print(f"[ICON ADDED] {folder} -> {file_path}")
 
 def save_json():
     """Save current game list as JSON file"""
@@ -137,7 +167,6 @@ if __name__ == "__main__":
 
     try:
         while True:
-            # pass
             observer.join(1)
     except KeyboardInterrupt:
         observer.stop()
