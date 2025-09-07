@@ -21,6 +21,7 @@ Games/
 │ └─ Game.exe
 
 └─ Hollow Knight/
+
   └─ Game.exe
 
 Each subfolder = one game.  
